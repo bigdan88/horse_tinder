@@ -1,0 +1,19 @@
+.app {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+h1 {
+  color: #c0392b;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  padding: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
