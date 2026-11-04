@@ -7,8 +7,7 @@ Environment notes:
   run anywhere with only Python.
 - `npm test` (AC4) is genuinely executed here; it needs no node_modules.
 - AC1/AC3 dynamic checks (dev server, production build) self-provision
-  node_modules via `npm install` when missing (network required); they are
-  skipped only if npm is unavailable or the install fails.
+  preinstalled node_modules and fail if dependencies are missing.
 - AC2 is verified semantically by importing horses.ts with Node's built-in
   TypeScript type-stripping (Node >= 22.6), not by regex alone.
 """
@@ -167,35 +166,8 @@ def test_ac1_entrypoint_renders_app_into_root_div():
     assert "Horse Tinder Demo" in app
 
 
-_DEPS_CACHE: bool | None = None
-
-
-def _ensure_deps_installed() -> bool:
-    """Return True when node_modules has vite and plugin-react.
-
-    Self-provisions via `npm install` when missing (node_modules is
-    gitignored, so a fresh checkout starts without it). The install runs at
-    most once per pytest session; the result is cached. Returns False only
-    when npm is unavailable or the install fails.
-    """
-    global _DEPS_CACHE
-    if _DEPS_CACHE is not None:
-        return _DEPS_CACHE
-    vite_dir = ROOT / "node_modules" / "vite"
-    plugin_dir = ROOT / "node_modules" / "@vitejs" / "plugin-react"
-    ok = vite_dir.is_dir() and plugin_dir.is_dir()
-    if not ok and shutil.which("npm") is not None:
-        subprocess.run(
-            ["npm", "install", "--no-audit", "--no-fund"],
-            cwd=ROOT,
-            capture_output=True,
-            text=True,
-            timeout=600,
-            check=False,
-        )
-        ok = vite_dir.is_dir() and plugin_dir.is_dir()
-    _DEPS_CACHE = ok
-    return ok
+def _require_deps() -> None:
+    assert (ROOT / "node_modules" / "vite").is_dir(), "Run npm install before running the acceptance tests"
 
 
 def _wait_for_port(port: int, proc: subprocess.Popen, timeout: float = 30.0) -> None:
@@ -214,17 +186,16 @@ def _wait_for_port(port: int, proc: subprocess.Popen, timeout: float = 30.0) -> 
 def test_ac1_npm_run_dev_serves_root_div_over_http():
     """Dynamic half of AC1: curl-equivalent GET http://localhost:5173 must
     return HTTP 200 with the #root div."""
-    if not _ensure_deps_installed():
-        pytest.skip("npm install could not provision node_modules in this environment")
+    _require_deps()
     proc = subprocess.Popen(
-        ["npm", "run", "dev"],
+        ["npm", "run", "dev", "--", "--host", "127.0.0.1", "--strictPort"],
         cwd=ROOT,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
     try:
         _wait_for_port(5173, proc)
-        with urllib.request.urlopen("http://localhost:5173/", timeout=10) as resp:
+        with urllib.request.urlopen("http://127.0.0.1:5173/", timeout=10) as resp:
             assert resp.status == 200
             body = resp.read().decode("utf-8")
         assert '<div id="root">' in body
@@ -317,8 +288,7 @@ def test_ac3_build_script_and_no_server_runtime_dependency():
 def test_ac3_npm_run_build_emits_hashed_static_dist():
     """Dynamic half of AC3: `npm run build` must exit 0 and emit a static
     dist/ with hashed assets referenced by dist/index.html."""
-    if not _ensure_deps_installed():
-        pytest.skip("npm install could not provision node_modules in this environment")
+    _require_deps()
     result = subprocess.run(
         ["npm", "run", "build"],
         cwd=ROOT,
