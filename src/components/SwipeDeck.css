@@ -1,0 +1,104 @@
+.card-deck {
+  position: relative;
+  width: min(340px, 90vw);
+  height: 480px;
+  margin: 0 auto;
+  touch-action: none;
+  user-select: none;
+}
+
+.card {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  background: #fff;
+}
+
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.card-info {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 16px;
+  color: #fff;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));
+}
+
+.card-info h2 {
+  margin: 0 0 4px;
+  font-size: 1.4rem;
+}
+
+.card-info .breed {
+  margin: 0;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.card-info .age {
+  margin: 2px 0 0;
+  opacity: 0.8;
+}
+
+.card.swipe-right {
+  animation: slideRightFade 300ms ease-out forwards;
+}
+
+.card.swipe-left {
+  animation: slideLeftFade 300ms ease-out forwards;
+}
+
+@keyframes slideRightFade {
+  from {
+    transform: translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(120vw) rotate(15deg);
+    opacity: 0;
+  }
+}
+
+@keyframes slideLeftFade {
+  from {
+    transform: translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-120vw) rotate(-15deg);
+    opacity: 0;
+  }
+}
+
+.counter {
+  text-align: center;
+  margin: 16px 0;
+  font-size: 1rem;
+  color: #555;
+}
+
+.reset-btn {
+  display: block;
+  margin: 24px auto;
+  padding: 12px 28px;
+  border: none;
+  border-radius: 24px;
+  background: #e74c3c;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.reset-btn:hover {
+  background: #c0392b;
+}
