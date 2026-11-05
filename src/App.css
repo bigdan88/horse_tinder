@@ -1,19 +1,18 @@
 .app {
-  max-width: 600px;
-  margin: 2rem auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   padding: 1rem;
+  box-sizing: border-box;
 }
 
 h1 {
   color: #c0392b;
 }
 
-ul {
-  list-style: none;
-  padding: 0;
-}
-
-li {
-  padding: 0.5rem;
-  border-bottom: 1px solid #eee;
+.tagline {
+  color: #6b5d4f;
+  margin: 0 0 1rem;
 }
