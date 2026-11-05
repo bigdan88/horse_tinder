@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import horses from '../data/horses';
 import Card from './Card';
+import ProfileModal from './ProfileModal';
 import './SwipeDeck.css';
 
 const SWIPE_THRESHOLD = 100;
@@ -18,6 +19,7 @@ export default function CardDeck() {
   const [deck, setDeck] = useState(() => shuffleDeck(horses));
   const [animating, setAnimating] = useState(null); // null | 'left' | 'right'
   const [leavingCard, setLeavingCard] = useState(null);
+  const [selectedHorse, setSelectedHorse] = useState(null);
   const startX = useRef(0);
   const deltaX = useRef(0);
   const timeoutRef = useRef(null);
@@ -57,6 +59,9 @@ export default function CardDeck() {
     if (Math.abs(deltaX.current) > SWIPE_THRESHOLD) {
       triggerSwipe(deltaX.current > 0 ? 'right' : 'left');
     } else {
+      if (Math.abs(deltaX.current) < 10 && animating === null && deck.length > 0) {
+        setSelectedHorse(deck[0]);
+      }
       deltaX.current = 0;
     }
   };
@@ -103,6 +108,7 @@ export default function CardDeck() {
           ))}
         </div>
       )}
+      <ProfileModal horse={selectedHorse} onClose={() => setSelectedHorse(null)} />
     </div>
   );
 }

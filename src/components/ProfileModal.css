@@ -1,0 +1,73 @@
+.profile-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.profile-modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 400px;
+  width: 90vw;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+.profile-photo {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.profile-modal h2 {
+  margin: 0 0 8px;
+  color: #c0392b;
+  font-size: 1.6rem;
+}
+
+.profile-breed {
+  font-weight: 600;
+  color: #555;
+  margin: 0 0 4px;
+}
+
+.profile-age {
+  color: #777;
+  margin: 0 0 12px;
+}
+
+.profile-bio {
+  line-height: 1.5;
+  color: #333;
+  margin: 0 0 16px;
+}
+
+.profile-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-close:hover {
+  background: #c0392b;
+}
