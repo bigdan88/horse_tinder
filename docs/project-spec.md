@@ -64,7 +64,11 @@ Ask before: Nothing — user granted full creative and technical latitude on all
 ## Living
 
 ### Current state
-Repository bigdan88/horse_tinder at sha 2fa7d9d86698caef4194ea2096cc8d24112cdb2b on main. Milestones 1, 2, and 3 are COMPLETE. M3 implementation merged via PR #4 (sha 314759cf); m3-profile-acceptance-tests merged via PR #5 (sha 2fa7d9d8, run 20261104-221623-72ffbd). Evidence: 99 pytest tests passed, 0 failed, 0 skipped; reviewer approved; auto-merged. Current tree includes src/components/ProfileModal.jsx, src/components/ProfileModal.css, src/components/CardDeck.jsx with tap wiring, src/components/Card.jsx, src/components/SwipeDeck.css, src/data/horses.ts (14 horses), tests/test_profile_view.py, tests/test_acceptance_profile_modal.py, tests/test_swipe_deck.py, tests/test_acceptance_swipe_deck.py, tests/test_scaffold.py, tests/test_acceptance_scaffold.py, tests/test_workflow.py, tests/test_acceptance_pages_deploy.py, .github/workflows/deploy.yml. src/App.jsx preserves 'Horse Tinder Demo' and './data/horses'. GitHub Actions deploy workflow is live. Budget: $17.69 / $20.00 remaining. Deadline: 2026-11-06. Test command: python -m pytest -q. npm test is placeholder echo. M4 (Match Animation & Liked Collection) starting.
+Repository bigdan88/horse_tinder at sha b6173d45a709cc909fc43bb0b970e9d96fde33b9 on main. Milestones 1, 2, and 3 are COMPLETE. Current tree includes src/App.jsx, src/components/CardDeck.jsx, src/components/Card.jsx, src/components/ProfileModal.jsx, src/components/ProfileModal.css, src/components/SwipeDeck.css, src/data/horses.ts (14 horses), .github/workflows/deploy.yml, README.md, docs/project-spec.md, and static pytest suites for scaffold, workflow, swipe deck, and profile view. No M4 source components exist yet: no src/components/MatchOverlay.jsx, MatchOverlay.css, LikedHorses.jsx, or LikedHorses.css, and no tests/test_match_liked.py.
+
+Evidence: 99 pytest tests passed, 0 failed, 0 skipped; M3 implementation merged via PR #4 (sha 314759cf) and M3 acceptance tests merged via PR #5 (sha 2fa7d9d8). GitHub Actions Pages deploy workflow is live. Budget: $17.65 / $20.00 remaining. Deadline: 2026-11-06. Test command: python -m pytest -q. npm test is placeholder echo.
+
+M4 starting. Two implementation attempts failed before tool use: run 20261104-231946-5831ef and run 20261104-232320-1d9ca9 both ended with 'Pi harness: FileNotFoundError: [WinError 206] The filename or extension is too long' and produced no code changes.
 
 ### Decisions made
 - **2026-11-03**: Full creative latitude confirmed by user. Horse names, breeds, ages, bios, AI image URLs, color palette, deck size (~14), and 33% match probability are all free to choose.
@@ -123,10 +127,29 @@ Repository bigdan88/horse_tinder at sha 2fa7d9d86698caef4194ea2096cc8d24112cdb2b
 - **2026-11-05**: M3 implementation merged via PR #4 sha 314759cf. 91 tests pass, 0 skipped. Reviewer approved. m3-profile-acceptance-tests merged via PR #5 sha 2fa7d9d8. 99 tests pass, 0 skipped. M3 fully complete.
 - **2026-11-05**: M4 Match Animation & Liked Collection planned as 2 tasks (implementation + static tests), budget $1.5 + $1.0 = $2.5 (tightened from $4.0 estimate). 33% match uses Math.random() < 0.33 on right-swipe completion. Liked horses tracked in CardDeck state array. MatchOverlay and LikedHorsesGrid as new components. Nav button in App.jsx header toggles grid view. No new npm deps. M5 budgeted at $1.0.
 
+- **2026-11-03**: Full creative latitude confirmed by user. Horse names, breeds, ages, bios, AI image URLs, color palette, deck size (~14), and 33% match probability are all free to choose.
+- **2026-11-03**: Stack locked to React + Vite static SPA; hosting is GitHub Pages; no backend, no accounts.
+- **2026-11-03**: No spike needed for milestone 1 — Vite scaffold, data authoring, and Pages CI are standard, low-risk work.
+- **2026-11-03**: After 2 failures, m1-scaffold-vite-react rewritten as single-agent task. .gitignore written first, package-lock.json gitignored entirely, no parallel/split tasks. This addresses fabricated lockfile and git add -A node_modules crash.
+- **2026-11-03**: m1-github-pages-workflow unchanged in scope but sequenced after scaffold merge. Workflow uses npm install not npm ci because lockfile is gitignored.
+- **2026-11-04**: After attempt 3 failed because the tester sandbox has network=none and dynamic npm tests skipped, the committed pytest suite must verify all ACs via static file-content analysis. Dynamic npm verification is developer confidence only, not gate evidence. Same key m1-scaffold-vite-react preserved.
+- **2026-11-04**: Budget tightened: M1 scaffold reduced from $3.0 to $2.5 and workflow from $1.5 to $1.0, total $3.5 versus original $5.0 estimate.
+- **2026-11-05**: Milestone 1 confirmed complete on main sha 1a0b0392. Both scaffold and workflow tasks merged and verified with 53 pytest tests pass, 0 skipped. M2 planned as implementation plus static acceptance tests, budget $3.5.
+- **2026-11-05**: M2 attempt 1 failed on last-card animation because empty-state conditional used deck.length === 0 alone. Fix gate on deck.length === 0 && !leavingCard && !animating.
+- **2026-11-05**: M2 attempt 2 succeeded and auto-merged as PR #3 sha 3c48c6c1. 72 tests pass, 0 skipped. leavingCard guard implemented. Three minor review findings noted but non-blocking.
+- **2026-11-05**: M3 Full Profile View planned as implementation plus static tests, budget $1.5 + $1.0 = $2.5. Tap detection distinguishes from swipe by checking |deltaX| < 10. Modal is fixed-position overlay component. No new npm dependencies.
+- **2026-11-05**: M3 implementation merged via PR #4 sha 314759cf. 91 tests pass, 0 skipped. Reviewer approved.
+- **2026-11-05**: M3 acceptance tests merged via PR #5 sha 2fa7d9d8. 99 tests pass, 0 skipped. M3 fully complete.
+- **2026-11-05**: M4 Match Animation & Liked Collection planned as implementation plus static tests, budget $1.5 + $1.0 = $2.5. 33% match uses Math.random() < 0.33 on right-swipe completion. Liked horses tracked in CardDeck state array. MatchOverlay and LikedHorses as new components. Nav button toggles grid view. No new npm dependencies. M5 budgeted at $1.0.
+- **2026-11-05**: After two m4-match-liked failures caused by Pi harness WinError 206 path-too-long with zero code changes, do not retry unchanged. Schedule a capped single-agent spike to diagnose and document a safe workaround for the next M4 implementation task. Spike budget is $0.5, within the smaller of $2 or 10% of the $20 total project budget.
+
 ### Plan
-**Milestone 4 – Match Animation & Liked Collection** (target $4.0 / 3 h, budgeted $2.5):
-1. `m4-match-liked` (READY, $1.5) — Single-agent: add liked-horses tracking, 33% random match overlay, and Liked Horses grid view with nav button. Modify CardDeck.jsx to push right-swiped horses to a `liked` state array and trigger `Math.random() < 0.33` match check. New components: src/components/MatchOverlay.jsx + MatchOverlay.css (celebratory overlay with horse photo), src/components/LikedHorses.jsx + LikedHorses.css (grid of thumbnail + name). Add nav button to App.jsx header. docs/project-spec.md committed unchanged.
-2. `m4-match-acceptance-tests` (READY, $1.0) — Static pytest suite (tests/test_match_liked.py) verifying M4 ACs via file-content analysis: Math.random < 0.33 in CardDeck.jsx, liked array push on right-swipe, MatchOverlay renders horse.imageUrl + 'Match' text, LikedHorses grid maps over liked array with img + name, nav button toggles grid visibility. All tests PASS without npm/network. docs/project-spec.md committed unchanged.
+**Milestone 4 – Match Animation & Liked Collection** (target $4.0 / 3 h, budgeted $2.5 plus $0.5 diagnostic spike):
+1. `m4-pi-path-spike` (READY, $0.5) — Single-agent spike. Reproduce or rule out the Pi harness WinError 206 path-too-long failure on current main, investigate the shortest safe workaround for M4 implementation, and write findings to docs/m4-pi-path-spike-notes.md. No M4 source-code changes. docs/project-spec.md committed unchanged.
+
+Tentative after spike merge:
+- `m4-match-liked` — Rewrite implementation using the spike's workaround: add liked state, Math.random() < 0.33 match trigger on right-swipe completion, MatchOverlay, LikedHorses grid, liked nav button, and reset clearing liked/matched state while preserving existing swipe, counter, reset, tap, ProfileModal, and App.jsx behavior. docs/project-spec.md committed unchanged.
+- `m4-match-acceptance-tests` — Static pytest suite verifying M4 acceptance criteria via file-content analysis. docs/project-spec.md committed unchanged.
 
 **Milestone 5 – Polish & Live Deploy** (tentative, replan after M4 merge):
 - `m5-polish-deploy` — Cohesive visual style, responsive at 375px/1280px, zero console errors, confirm live Pages URL end-to-end. Budget $1.0.
@@ -166,5 +189,14 @@ Repository bigdan88/horse_tinder at sha 2fa7d9d86698caef4194ea2096cc8d24112cdb2b
 - **2026-11-05**: M2 attempt 1 FAILED (last-card animation defect). Attempt 2 SUCCEEDED with leavingCard guard fix. M2 complete at sha 3c48c6c1. M3 planned: 2 tasks ($1.5 + $1.0 = $2.5). Pattern continues: single-agent implementation + committed static pytest suite.
 - **2026-11-05**: M3 implementation merged at sha 314759cf (PR #4). m3-profile-acceptance-tests merged at sha 2fa7d9d8 (PR #5). 99 tests pass. M3 complete. M4 planned: 2 tasks ($1.5 + $1.0 = $2.5). M5 tentative at $1.0. Total remaining budget after M4+M5: ~$14.2.
 
+- **2026-11-03**: Initial plan created. No changes yet.
+- **2026-11-03**: After attempt 1 FAILED (fabricated lockfile → AC1/AC3/AC4): rewrote task to forbid hand-authored lockfiles and require genuine npm install verification. Kept same key m1-scaffold-vite-react.
+- **2026-11-03**: After attempt 2 FAILED (.gitignore missing → git add -A crash on node_modules; 5-task chain all blocked): rewrote as single-agent task with .gitignore as step 1 and package-lock.json gitignored. Same key preserved. m1-github-pages-workflow updated to use npm install instead of npm ci since lockfile is no longer committed.
+- **2026-11-04**: After attempt 3 FAILED (code correct, reviewer approved, but gate blocked AC1/AC3 because tester sandbox has network=none and dynamic npm tests SKIPPED): rewrote task to mandate a COMMITTED static pytest suite that verifies every AC via file-content analysis (no npm/network needed). Tests must PASS, never skip. Same key preserved. Budget reduced from $3.0 to $2.5 to conserve for remaining milestones.
+- **2026-11-05**: M1 complete. M2 planned with same single-agent + static-test pattern that succeeded. Split into implementation ($2.5) and acceptance tests ($1.0) = $3.5 total. No spike needed — swipe gestures via Pointer Events API and CSS animations are standard React work.
+- **2026-11-05**: M2 attempt 1 FAILED (last-card animation defect). Attempt 2 SUCCEEDED with leavingCard guard fix. M2 complete at sha 3c48c6c1. M3 planned: 2 tasks ($1.5 + $1.0 = $2.5). Pattern continues: single-agent implementation + committed static pytest suite.
+- **2026-11-05**: M3 implementation merged at sha 314759cf (PR #4). m3-profile-acceptance-tests merged at sha 2fa7d9d8 (PR #5). 99 tests pass. M3 complete. M4 planned: 2 tasks ($1.5 + $1.0 = $2.5). M5 tentative at $1.0.
+- **2026-11-05**: M4 implementation attempts 5831ef and 1d9ca9 FAILED before any tool calls with Pi harness FileNotFoundError WinError 206 path-too-long and produced no code changes. Rewritten plan: run a capped spike m4-pi-path-spike first; defer m4-match-liked until the spike documents a safe workaround or indicates a human infrastructure fix is required.
+
 ### Open questions
-- None. All M4 spec items are clear. The 33% match rate is probabilistic; static tests verify code structure (Math.random < 0.33, overlay component, liked array). Developer verifies actual rate by swiping 10+ horses. Liked Horses grid is a view toggle, not a separate route (single-page constraint).
+- None for the fixed spec. If the spike cannot identify a safe workaround for the Pi harness WinError 206 path-length failure, the next action should be a human-facing escalation about SwarmForge Windows path handling rather than another unchanged M4 code task.
