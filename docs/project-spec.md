@@ -64,7 +64,7 @@ Ask before: Nothing — user granted full creative and technical latitude on all
 ## Living
 
 ### Current state
-Repository `bigdan88/horse_tinder` at sha `3c48c6c1` on `main`. Milestones 1 and 2 COMPLETE. M2 merged via PR #3 (auto-merged, 556-line change, reviewer judged risk low). Swipe deck fully implemented: src/components/CardDeck.jsx (pointer events, 100px threshold, slide-and-fade animations, counter, Fisher-Yates reset/shuffle, leavingCard guard for last-card animation), src/components/Card.jsx, src/components/SwipeDeck.css (@keyframes slideRightFade/slideLeftFade with translateX ±120vw + opacity), src/App.jsx (mounts CardDeck, preserves 'Horse Tinder Demo' and './data/horses' strings). Test suite: 72 pytest tests, 0 skipped, 0 failures. GitHub Actions deploy workflow live. 14 horse profiles with inline SVG data-URI images. Budget: $18.05 / $20.00 remaining. Deadline: 2026-11-06. Test command: `python -m pytest -q` (swarmforge.project.yml). npm test is placeholder echo. M3 (Full Profile View) starting.
+Repository bigdan88/horse_tinder at sha 314759cf2246dce382f5572e92f9fcbf2e29313f on main. Milestones 1 and 2 are complete. Milestone 3 implementation is merged via PR #4 at sha 314759cf2246dce382f5572e92f9fcbf2e29313f. Evidence: 91 pytest tests passed, 0 failed, 0 skipped; reviewer approved; auto-merge judged risk low. Current tree includes src/components/ProfileModal.jsx, src/components/ProfileModal.css, src/components/CardDeck.jsx with tap wiring, and tests/test_acceptance_profile_modal.py. src/App.jsx preserves 'Horse Tinder Demo' and './data/horses'. src/data/horses.ts contains 14 horse objects. GitHub Actions deploy workflow is live. Budget: $17.8858 / $20.00 remaining. Deadline: 2026-11-06. Test command: python -m pytest -q. npm test is placeholder echo. Task m3-profile-acceptance-tests run 20261104-221623-72ffbd is still running to add tests/test_profile_view.py; do not start M4 until that task completes or is explicitly retired.
 
 ### Decisions made
 - **2026-11-03**: Full creative latitude confirmed by user. Horse names, breeds, ages, bios, AI image URLs, color palette, deck size (~14), and 33% match probability are all free to choose.
@@ -96,16 +96,23 @@ Repository `bigdan88/horse_tinder` at sha `3c48c6c1` on `main`. Milestones 1 and
 - **2026-11-05**: M2 attempt 2 (run 5cef10) SUCCEEDED and auto-merged as PR #3 (sha 3c48c6c1). 72 tests pass, 0 skipped. leavingCard guard implemented correctly. 3 minor review findings noted but non-blocking (onAnimationEnd scoping, counter includes leaving card, timeout cleanup on unmount — acceptable for demo).
 - **2026-11-05**: M3 Full Profile View planned as 2 tasks (implementation + static tests), budget $1.5 + $1.0 = $2.5. Tap detection distinguishes from swipe by checking |deltaX| < threshold (treat as click/tap). Modal is a fixed-position overlay component. No new npm deps.
 
+- 2026-11-03: Full creative latitude confirmed by user. Horse names, breeds, ages, bios, AI image URLs, color palette, deck size around 14, and 33 percent match probability are all free to choose.
+- 2026-11-03: Stack locked to React plus Vite static SPA; hosting is GitHub Pages; no backend, no accounts.
+- 2026-11-03: No spike needed for milestone 1; Vite scaffold, data authoring, and Pages CI are standard low-risk work.
+- 2026-11-03: After 2 failures, m1-scaffold-vite-react rewritten as single-agent task. .gitignore written first, package-lock.json gitignored entirely, no parallel or split tasks. This addresses fabricated lockfile and git add -A node_modules crash.
+- 2026-11-03: m1-github-pages-workflow unchanged in scope but sequenced after scaffold merge. Workflow uses npm install not npm ci because lockfile is gitignored.
+- 2026-11-04: After attempt 3 failed because tester sandbox has network none and dynamic npm tests skipped, the committed pytest suite must verify all ACs via static file-content analysis. Dynamic npm verification is developer confidence only, not gate evidence. Same key m1-scaffold-vite-react preserved.
+- 2026-11-04: Budget tightened: M1 scaffold reduced from 3.0 to 2.5 and workflow from 1.5 to 1.0, total 3.5 versus original 5.0 estimate.
+- 2026-11-05: Milestone 1 confirmed complete on main sha 1a0b0392. Both scaffold and workflow tasks merged and verified with 53 pytest tests pass, 0 skipped. M2 planned as implementation plus static acceptance tests, budget 3.5.
+- 2026-11-05: M2 attempt 1 failed on last-card animation because empty-state conditional used deck.length === 0 alone. Fix gate on deck.length === 0 and not leavingCard and not animating.
+- 2026-11-05: M2 attempt 2 succeeded and auto-merged as PR #3 sha 3c48c6c1. 72 tests pass, 0 skipped. leavingCard guard implemented. Three minor review findings noted but non-blocking.
+- 2026-11-05: M3 Full Profile View planned as implementation plus static tests, budget 1.5 plus 1.0 equals 2.5. Tap detection distinguishes from swipe by checking abs(deltaX) less than 10. Modal is fixed-position overlay component. No new npm dependencies.
+- 2026-11-05: M3 implementation merged via PR #4 sha 314759cf. 91 tests pass, 0 skipped. Reviewer approved. Checkpoint M3 as done; m3-profile-acceptance-tests remains running and M4 is held until it finishes or is retired.
+
 ### Plan
-**Milestone 3 – Full Profile View** (target $3.0 / 2 h, budgeted $2.5):
-1. `m3-profile-modal` (READY, $1.5) — Single-agent: add tap-to-expand modal to CardDeck. Detect tap (|deltaX| < 10px on pointerup with no swipe triggered) on top card. New component src/components/ProfileModal.jsx showing full horse fields (name, breed, age, bio, larger photo) in a fixed overlay with close/back button. Update src/App.jsx to pass selected horse state. Add modal styles to SwipeDeck.css or new src/components/ProfileModal.css. docs/project-spec.md committed unchanged.
-2. `m3-profile-acceptance-tests` (READY, $1.0) — Static pytest suite (tests/test_profile_view.py) verifying M3 ACs via file-content analysis: tap handler presence in CardDeck.jsx, ProfileModal.jsx renders all horse fields + close button, overlay positioning CSS, 14 distinct profiles accessible. All tests PASS without npm/network. docs/project-spec.md committed unchanged.
-
-**Milestone 4 – Match Animation & Liked Collection** (tentative, replan after M3 merge):
-- `m4-match-liked` — 33% random match overlay on right-swipe; Liked Horses grid view with nav button.
-
-**Milestone 5 – Polish & Live Deploy** (tentative):
-- `m5-polish-deploy` — Cohesive visual style, responsive at 375px/1280px, zero console errors, confirm live Pages URL end-to-end.
+Milestone 3: checkpoint; no ready tasks now. Wait for m3-profile-acceptance-tests to complete or be explicitly retired. All future tasks must commit docs/project-spec.md unchanged.
+Milestone 4: tentative placeholder m4-match-liked; add 33 percent match overlay on right-swipe and Liked Horses grid view.
+Milestone 5: tentative placeholder m5-polish-deploy; cohesive visual style, responsive at 375px and 1280px, zero console errors, live Pages end-to-end confirmation.
 
 ### Plan changes
 - **2026-11-03**: Initial plan created. No changes yet.
@@ -126,5 +133,13 @@ Repository `bigdan88/horse_tinder` at sha `3c48c6c1` on `main`. Milestones 1 and
 - **2026-11-05**: M1 complete. M2 planned with same single-agent + static-test pattern that succeeded. Split into implementation ($2.5) and acceptance tests ($1.0) = $3.5 total. No spike needed — swipe gestures via Pointer Events API and CSS animations are standard React work.
 - **2026-11-05**: M2 attempt 1 FAILED (last-card animation defect). Attempt 2 SUCCEEDED with leavingCard guard fix. M2 complete at sha 3c48c6c1. M3 planned: 2 tasks ($1.5 + $1.0 = $2.5). Pattern continues: single-agent implementation + committed static pytest suite.
 
+- 2026-11-03: Initial plan created. No changes yet.
+- 2026-11-03: After attempt 1 failed due fabricated lockfile, rewrote m1-scaffold-vite-react to forbid hand-authored lockfiles and require genuine npm install verification. Same key preserved.
+- 2026-11-03: After attempt 2 failed due missing .gitignore causing git add -A crash, rewrote as single-agent task with .gitignore as step 1 and package-lock.json gitignored. Workflow updated to npm install. Same key preserved.
+- 2026-11-04: After attempt 3 failed due network none tester sandbox skipping dynamic npm tests, mandated committed static pytest suite that verifies every AC via file-content analysis. Same key preserved; budget reduced.
+- 2026-11-05: M1 complete. M2 planned with single-agent plus static-test pattern. Split into implementation and acceptance tests. No spike needed for Pointer Events and CSS animations.
+- 2026-11-05: M2 attempt 1 failed last-card animation defect. Attempt 2 succeeded with leavingCard guard. M2 complete at sha 3c48c6c1. M3 planned implementation plus static tests.
+- 2026-11-05: M3 implementation merged at sha 314759cf. Checkpoint M3 based on 91 passing tests and reviewer-approved PR #4. M4 deferred until m3-profile-acceptance-tests completes or is retired.
+
 ### Open questions
-- None. All M3 spec items are clear. Tap vs swipe distinction: if pointerup delta < 10px and no swipe was triggered, treat as tap. Modal will be a fixed-position overlay div rendered conditionally when a horse is selected.
+- None for the fixed spec. Operational question: whether to retire redundant tests/test_profile_view.py because tester-created tests/test_acceptance_profile_modal.py already provides static gate evidence for M3. Current plan waits for the running task to finish or be explicitly retired before replanning M4.
