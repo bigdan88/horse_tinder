@@ -598,6 +598,91 @@ def test_component_export_signatures_unchanged():
     ), "LikedHorses.jsx must keep its export signature"
 
 
+def test_app_jsx_header_and_tagline_unchanged():
+    src = _read(APP)
+    assert "<h1>Horse Tinder Demo</h1>" in src, (
+        "src/App.jsx must keep its <h1>Horse Tinder Demo</h1> header"
+    )
+    assert (
+        '<p className="tagline">{horses.length} horses looking for love</p>' in src
+    ), "src/App.jsx must keep its tagline"
+
+
+def test_card_jsx_structure_unchanged():
+    src = _read(CARD)
+    for marker in (
+        "className={'card ' + className}",
+        "<img src={horse.imageUrl} alt={horse.name} />",
+        'className="card-info"',
+        "<h2>{horse.name}</h2>",
+        'className="breed"',
+        'className="age"',
+    ):
+        assert marker in src, f"Card.jsx must keep {marker!r}"
+
+
+def test_profile_modal_jsx_structure_unchanged():
+    src = _read(MODAL)
+    for marker in (
+        "import './ProfileModal.css';",
+        "if (!horse) return null;",
+        'className="profile-overlay"',
+        'className="profile-modal"',
+        'className="profile-photo"',
+        'className="profile-breed"',
+        'className="profile-age"',
+        'className="profile-bio"',
+        'className="profile-close"',
+    ):
+        assert marker in src, f"ProfileModal.jsx must keep {marker!r}"
+
+
+def test_match_overlay_jsx_structure_unchanged():
+    src = _read(MATCH)
+    for marker in (
+        "import './MatchOverlay.css';",
+        "if (!horse) return null;",
+        'className="match-overlay"',
+        'className="match-card"',
+        "<h2>It's a Match!</h2>",
+        'className="match-photo"',
+        'className="match-name"',
+        'className="match-close"',
+    ):
+        assert marker in src, f"MatchOverlay.jsx must keep {marker!r}"
+
+
+def test_liked_horses_jsx_structure_unchanged():
+    src = _read(LIKED)
+    for marker in (
+        "import './LikedHorses.css';",
+        "if (!horses || horses.length === 0)",
+        'className="liked-empty"',
+        'className="liked-grid"',
+        'className="liked-item"',
+        'className="liked-thumb"',
+        "<p>{horse.name}</p>",
+    ):
+        assert marker in src, f"LikedHorses.jsx must keep {marker!r}"
+
+
+def test_index_html_metadata_unchanged():
+    html = _read(INDEX_HTML)
+    for marker in (
+        '<html lang="en">',
+        '<meta charset="UTF-8" />',
+        '<meta name="viewport" content="width=device-width, initial-scale=1.0" />',
+        "<title>Horse Tinder Demo</title>",
+    ):
+        assert marker in html, f"index.html must keep {marker!r}"
+
+
+def test_package_json_metadata_unchanged():
+    raw = _read(PACKAGE)
+    assert '"name": "horse-tinder"' in raw, "package.json name must stay horse-tinder"
+    assert '"version": "0.1.0"' in raw, "package.json version must stay 0.1.0"
+
+
 def test_horses_data_unchanged():
     data = _read(HORSES)
     assert "export const horses" in data, "horses.ts must keep the named export"
@@ -697,6 +782,12 @@ def test_repo_hygiene_files_unchanged():
     assert '<div id="root">' in html, "index.html must keep the root div"
     assert "/src/main.jsx" in html, "index.html must keep the main.jsx entrypoint"
     main = _read(MAIN)
+    assert "import React from 'react';" in main, (
+        "src/main.jsx must keep the React import"
+    )
+    assert "import { createRoot } from 'react-dom/client';" in main, (
+        "src/main.jsx must keep the createRoot import"
+    )
     assert "createRoot" in main, "src/main.jsx must keep createRoot"
     assert "getElementById('root')" in main, (
         "src/main.jsx must keep mounting into #root"
@@ -705,6 +796,7 @@ def test_repo_hygiene_files_unchanged():
         "src/main.jsx must keep the App import"
     )
     assert "import './index.css'" in main, "src/main.jsx must keep the index.css import"
+    assert "<React.StrictMode>" in main, "src/main.jsx must keep the StrictMode wrapper"
     # The lockfile must never be created; node_modules may exist locally from
     # an install but is gitignored, so it can never be committed.
     assert not (ROOT / "package-lock.json").exists(), (
