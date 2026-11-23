@@ -64,11 +64,13 @@ Ask before: Nothing — user granted full creative and technical latitude on all
 ## Living
 
 ### Current state
-Repository `bigdan88/horse_tinder`, main at sha `0279ea664c0c4790f67178899195be981fc96110`. Milestones 1, 2 and 3 are complete and merged (PR #2 workflow, PR #3 swipe deck sha `3c48c6c1`, PR #4 profile modal sha `314759cf`, PR #5 profile tests sha `2fa7d9d8`). Tree contains `src/App.jsx`, `src/components/CardDeck.jsx`, `Card.jsx`, `ProfileModal.jsx/.css`, `SwipeDeck.css`, `src/data/horses.ts` (14 profiles, inline SVG data-URI images), `.github/workflows/deploy.yml`, `README.md`, `docs/project-spec.md`, and static pytest suites for scaffold, workflow, swipe deck and profile view. No M4 files exist yet (`MatchOverlay.jsx/.css`, `LikedHorses.jsx/.css`, `tests/test_match_liked.py` are absent).
+Repository `bigdan88/horse_tinder`, main at sha `952f9de90e4e07aba95140b39a9ac34dd2c64408`. Milestones 1, 2 and 3 are complete and merged (PR #2 workflow; PR #3 swipe deck sha `3c48c6c1`; PR #4 profile modal sha `314759cf`; PR #5 profile tests sha `2fa7d9d8`). Tree: `src/App.jsx`, `src/components/CardDeck.jsx`, `Card.jsx`, `ProfileModal.jsx/.css`, `SwipeDeck.css`, `src/data/horses.ts` (14 profiles, inline SVG data-URI images), `.github/workflows/deploy.yml`, `README.md`, `docs/project-spec.md`, and eight static pytest files (scaffold, workflow, swipe deck, profile view + acceptance variants). No M4 files exist (`MatchOverlay.jsx/.css`, `LikedHorses.jsx/.css`, `tests/test_match_liked.py` absent).
 
-Test command: `python -m pytest -q` (from `swarmforge.project.yml`); recorded baseline exits 0 with 99 passed, 0 failed, 0 skipped. `npm test` is a placeholder echo; `npm run dev` / `npm run build` are the Vite commands. Budget remaining $17.57 of $20.00. Spec deadline 2026-11-06 has passed; today is 2026-11-22.
+Test command `python -m pytest -q` (from `swarmforge.project.yml`); recorded baseline exits 0 with 99 passed, 0 failed, 0 skipped. `npm test` is a placeholder echo; `npm run dev` / `npm run build` are the Vite commands. Budget remaining $17.19 of $20.00. Spec deadline 2026-11-06 has passed; today is 2026-11-23.
 
-M4 remains unimplemented. Runs `20261104-231946-5831ef` and `20261104-232320-1d9ca9` (`m4-match-liked`) and runs `20261104-232853-62e66f` and `20261104-233048-27a5c2` (`m4-pi-path-spike`) all failed before any tool call with `Pi harness: FileNotFoundError: [WinError 206] The filename or extension is too long`, producing zero code changes. The last successful run (`20261104-221623-72ffbd`) carried a substantially smaller issue payload; the Living block has since been duplicated many times, inflating every task payload.
+M4 remains unimplemented. Runs `20261104-231946-5831ef` and `20261104-232320-1d9ca9` (`m4-match-liked`) plus spike runs `20261104-232853-62e66f` and `20261104-233048-27a5c2` all failed before any tool call with `Pi harness: FileNotFoundError: [WinError 206] The filename or extension is too long`, zero code changes. The newest attempt `20261122-212957-4c49fb` (2026-11-22) did NOT reach Pi at all: it BLOCKED during repository inspection with `cannot continue from 20261122-160436-7d879c: its workspace (clone) no longer exists; use Start again instead` — 0 LLM calls, 0 tasks, $0.00 spent. The compact-payload hypothesis is therefore still untested; the observed blocker was continuation from a deleted workspace.
+
+The checks supplied for the current milestone are the four swipe-deck checks (right slide-and-fade, left slide-and-fade, remaining counter, Reset & Shuffle restoring 14 in new order). All four are recorded `needs you` with no evidence attached even though the implementing PR #3 merged; browser journeys are unavailable, so they remain human-unverified and are not claimed as passed here.
 
 ### Decisions made
 - **2026-11-03**: Full creative latitude confirmed by user. Horse names, breeds, ages, bios, AI image URLs, color palette, deck size (~14), and 33% match probability are all free to choose.
@@ -181,13 +183,36 @@ M4 remains unimplemented. Runs `20261104-231946-5831ef` and `20261104-232320-1d9
 - **2026-11-22**: If this compact-payload attempt also fails before any tool call, stop scheduling M4 or spike work and pause for concrete human SwarmForge host repair; do not retry a third time unchanged.
 - **2026-11-22**: Plan validation rejected the first compact-payload submission because tentative placeholders declared dependencies that were neither completed evidence nor earlier eligible ready tasks. Corrected by leaving all `depends_on` lists empty and expressing sequencing through task order and this Plan section; scope, budgets and keys unchanged.
 
+- **2026-11-03**: Full creative latitude confirmed by user — horse names, breeds, ages, bios, image URLs, palette, deck size (~14) and the 33% match probability are free choices.
+- **2026-11-03**: Stack locked to React + Vite static SPA on GitHub Pages; no backend, no accounts.
+- **2026-11-03**: No spike needed for milestone 1; scaffold, data authoring and Pages CI are standard low-risk work.
+- **2026-11-03**: After 2 failures, `m1-scaffold-vite-react` rewritten as a single-agent task: `.gitignore` written first, `package-lock.json` gitignored entirely, no parallel/split tasks (fixes fabricated lockfile and `git add -A` node_modules crash).
+- **2026-11-03**: `m1-github-pages-workflow` unchanged in scope but sequenced after the scaffold merge; workflow uses `npm install`, not `npm ci`, because the lockfile is gitignored.
+- **2026-11-04**: After attempt 3 failed (code correct, reviewer approved, gate blocked AC1/AC3 because the tester sandbox has network=none and dynamic npm tests SKIPPED), the committed pytest suite must verify every acceptance criterion via static file-content analysis. Dynamic npm checks are developer confidence only, not gate evidence. Key `m1-scaffold-vite-react` preserved.
+- **2026-11-04**: Budget tightened — M1 scaffold $3.0 → $2.5, workflow $1.5 → $1.0 (total $3.5 vs $5.0 estimate).
+- **2026-11-05**: Milestone 1 confirmed complete on main sha `1a0b0392`; 53 pytest tests pass, 0 skipped. M2 planned as implementation + static acceptance tests, budget $3.5.
+- **2026-11-05**: M2 attempt 1 (`2dafe1`) failed on last-card animation because the empty state used `deck.length === 0` alone; fix is to gate on `deck.length === 0 && !leavingCard && !animating`.
+- **2026-11-05**: M2 attempt 2 (`5cef10`) succeeded, auto-merged as PR #3 sha `3c48c6c1`; 72 tests pass, 0 skipped; three minor non-blocking findings (onAnimationEnd scoping, counter includes leaving card, timeout cleanup).
+- **2026-11-05**: M3 planned as implementation $1.5 + static tests $1.0; tap distinguished from swipe by `|deltaX| < 10`; modal is a fixed-position overlay; no new npm dependencies.
+- **2026-11-05**: M3 implementation merged via PR #4 sha `314759cf`; 91 tests pass; reviewer approved; M4 held until the acceptance-test task finished.
+- **2026-11-05**: M3 acceptance tests merged via PR #5 sha `2fa7d9d8`; 99 tests pass, 0 skipped; M3 fully complete.
+- **2026-11-05**: M4 planned as implementation $1.5 + static tests $1.0 (tightened from $4.0). Match uses `Math.random() < 0.33` on right-swipe completion; liked horses tracked in CardDeck state; MatchOverlay and LikedHorses as new components; nav button toggles the grid; no new npm deps. M5 budgeted at $1.0.
+- **2026-11-05**: After two `m4-match-liked` WinError 206 failures with zero code changes, do not retry unchanged — schedule a capped single-agent spike ($0.5, within the smaller of $2 or 10% of the $20 total).
+- **2026-11-05**: After two `m4-pi-path-spike` attempts also failed before tool use with the same WinError 206, escalate for human SwarmForge Windows path handling repair; preserve keys `m4-match-liked` and `m4-match-acceptance-tests`.
+- **2026-11-22**: Escalation delivered (short host run root such as C:\sf\runs, Windows long-path support, or builtin-runtime fallback on WinError 206); user replied "continue" without confirming a host change. No Fixed change needed or made; "continue" read as resume work, not spec amendment.
+- **2026-11-22**: Hypothesis logged rather than asked: WinError 206 is an argument/path-length error at Pi startup and the only growth since the last success (PR #5) was the issue payload (Living duplicated six-plus times). Rewrite `m4-match-liked` with a compact description and de-duplicated Living preserving every unique dated entry once.
+- **2026-11-22**: Plan validation rejected the first compact submission because tentative placeholders declared ineligible dependencies; corrected by leaving all `depends_on` empty and expressing sequencing through task order and the Plan section.
+- **2026-11-23**: New evidence supersedes the pause trigger: attempt `4c49fb` blocked on a missing seed workspace (`use Start again instead`), never invoking Pi, so the earlier "if the compact attempt fails pre-tool, pause" condition was not actually exercised. Re-issue `m4-match-liked` as a fresh start from main with no seed/continuation linkage, same key, same scope, same $1.5 budget, compact payload retained.
+- **2026-11-23**: If this fresh-start attempt again fails before any tool call with WinError 206, the payload hypothesis is disproved and the next action is a pause for concrete human SwarmForge host repair (short run root / long-path support / builtin fallback) — not a third unchanged retry.
+- **2026-11-23**: The four supplied swipe-deck checks stay `needs you`; merged code is not treated as verification evidence and no browser pass is claimed.
+
 ### Plan
 Current milestone 4 — Match Animation & Liked Collection. Tasks run sequentially in the order listed; replan after every merge.
-1. `m4-match-liked` (READY, $1.5) — compact-payload rewrite: liked state, `Math.random() < 0.33` match trigger on right-swipe completion, MatchOverlay, LikedHorses grid, liked nav button with count, reset clearing liked/matched state; preserve swipe, counter, reset, tap, ProfileModal and App.jsx behavior; commit `docs/project-spec.md` Fixed unchanged.
+1. `m4-match-liked` (READY, $1.5) — fresh clone of main, no continuation: liked state, `Math.random() < 0.33` on right-swipe completion, MatchOverlay, LikedHorses grid, liked nav button with count, reset clearing liked/matched state; preserve swipe, counter, reset, tap, ProfileModal and App.jsx behavior; commit `docs/project-spec.md` Fixed unchanged.
 2. `m4-match-acceptance-tests` (tentative, $1.0) — static pytest suite `tests/test_match_liked.py` verifying the M4 checks by file-content analysis; made ready at the replan after the implementation merge.
 
 Tentative after M4:
-- `m5-polish-deploy` ($1.0) — cohesive style, responsive at 375px/1280px, zero console errors, live GitHub Pages URL verified end-to-end.
+- `m5-polish-deploy` ($1.0) — cohesive style, responsive at 375px/1280px, zero console errors, live GitHub Pages URL verified end-to-end (live/browser confirmation will need human verification).
 
 ### Plan changes
 - **2026-11-03**: Initial plan created. No changes yet.
@@ -257,5 +282,20 @@ Tentative after M4:
 - **2026-11-22**: Escalation delivered; user replied "continue" with no host change confirmed. Plan changed again: instead of another pause, retry `m4-match-liked` once with a materially smaller payload — compact task description plus a de-duplicated Living that preserves every unique dated decision and plan-change entry. Acceptance-test and M5 tasks stay tentative. If this attempt fails before tool use, the next action is a pause for human SwarmForge Windows path/argument repair.
 - **2026-11-22**: Resubmitted the same compact-payload plan after a dependency-validation rejection; removed the invalid `depends_on` references from the two tentative placeholders (all dependency lists now empty), keeping keys, budgets, scope and order identical.
 
+- **2026-11-03**: Initial plan created.
+- **2026-11-03**: After attempt 1 failed (fabricated lockfile → AC1/AC3/AC4), forbade hand-authored lockfiles and required genuine npm install verification; key `m1-scaffold-vite-react` preserved.
+- **2026-11-03**: After attempt 2 failed (missing `.gitignore` → `git add -A` node_modules crash), rewrote as a single-agent task with `.gitignore` first and lockfile gitignored; workflow switched to `npm install`.
+- **2026-11-04**: After attempt 3 failed (network=none tester skipped dynamic npm tests), mandated a committed static pytest suite as gate evidence; budget reduced $3.0 → $2.5; key preserved.
+- **2026-11-05**: M1 complete; M2 planned as implementation $2.5 + static tests $1.0; no spike needed for Pointer Events and CSS animations.
+- **2026-11-05**: M2 attempt 1 failed on the last-card animation defect; attempt 2 succeeded with the leavingCard guard; M2 complete at sha `3c48c6c1`; M3 planned as two tasks ($1.5 + $1.0).
+- **2026-11-05**: M3 implementation merged at sha `314759cf`; M3 checkpointed on 91 passing tests and reviewer approval; M4 deferred until `m3-profile-acceptance-tests` completed or was retired.
+- **2026-11-05**: M3 acceptance tests merged at sha `2fa7d9d8` (99 tests); M3 complete; M4 planned as two tasks ($1.5 + $1.0); M5 tentative at $1.0.
+- **2026-11-05**: M4 attempts `5831ef` and `1d9ca9` failed before any tool call with WinError 206 and no code changes; plan rewritten to run the capped spike `m4-pi-path-spike` first and defer `m4-match-liked`.
+- **2026-11-05**: Spike attempts `62e66f` and `27a5c2` failed identically; plan changed to schedule no further M4 or spike work until human host repair, and to escalate an operational correction.
+- **2026-11-22**: Escalation delivered; user replied "continue" with no host change confirmed. Retried `m4-match-liked` once with a materially smaller payload (compact description + de-duplicated Living); acceptance-test and M5 tasks stayed tentative.
+- **2026-11-22**: Resubmitted the same compact plan after a dependency-validation rejection; removed invalid `depends_on` references from the tentative placeholders, keeping keys, budgets, scope and order identical.
+- **2026-11-23**: Attempt `4c49fb` BLOCKED on a deleted seed workspace rather than on Pi, so the plan is revised again: `m4-match-liked` re-issued as a fresh start from main (no seed run), same key/scope/$1.5, compact payload and de-duplicated Living retained; `m4-match-acceptance-tests` and `m5-polish-deploy` remain tentative with empty dependency lists. Next action after a merge is the usual replan; after another pre-tool WinError 206 it is a pause for human host repair.
+
 ### Open questions
-- None requiring a Fixed change. Unconfirmed: whether the SwarmForge host run root / long-path handling has been repaired, and whether payload length is the actual WinError 206 trigger. The compact-payload attempt is the cheap observable test of the second question; a repeat pre-tool failure answers it and forces a pause for human host repair.
+- None requiring a Fixed change. Unconfirmed: whether the SwarmForge host run root / long-path handling has been repaired, and whether payload length is the real WinError 206 trigger — the fresh-start attempt is the cheap observable test, since the previous attempt never reached Pi.
+- The four supplied swipe-deck checks are still `needs you` despite PR #3 being merged; human/browser confirmation is outstanding and will be requested at the appropriate milestone evaluation rather than asserted now.
