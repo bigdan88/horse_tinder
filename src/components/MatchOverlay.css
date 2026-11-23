@@ -12,15 +12,18 @@
   background: #fff;
   border-radius: 20px;
   padding: 24px;
-  max-width: 360px;
   width: 90vw;
+  width: min(90vw, 100% - 2rem);
+  max-width: 360px;
+  max-width: 100%;
+  height: min(480px, 80vh);
   text-align: center;
   position: relative;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
-  animation: match-pop 0.45s ease-out;
+  box-shadow: var(--shadow-lg);
+  animation: matchPop 0.45s ease-out;
 }
 
-@keyframes match-pop {
+@keyframes matchPop {
   from {
     transform: scale(0.4);
     opacity: 0;
@@ -34,8 +37,9 @@
 .match-photo {
   width: 100%;
   height: 260px;
+  height: min(260px, 60vw);
   object-fit: cover;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
 }
 
 .match-card h2 {
