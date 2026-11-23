@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react';
 import horses from '../data/horses';
 import Card from './Card';
+import LikedHorses from './LikedHorses';
+import MatchOverlay from './MatchOverlay';
 import ProfileModal from './ProfileModal';
 import './SwipeDeck.css';
 
@@ -20,10 +22,15 @@ export default function CardDeck() {
   const [animating, setAnimating] = useState(null); // null | 'left' | 'right'
   const [leavingCard, setLeavingCard] = useState(null);
   const [selectedHorse, setSelectedHorse] = useState(null);
+  const [liked, setLiked] = useState([]);
+  const [matchedHorse, setMatchedHorse] = useState(null);
+  const [showLiked, setShowLiked] = useState(false);
   const startX = useRef(0);
   const deltaX = useRef(0);
   const timeoutRef = useRef(null);
   const swipeDone = useRef(true);
+  const swipeDirRef = useRef(null);
+  const swipeCardRef = useRef(null);
 
   const finishSwipe = () => {
     if (swipeDone.current) return;
@@ -32,6 +39,15 @@ export default function CardDeck() {
       clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
     }
+    if (swipeDirRef.current === 'right' && swipeCardRef.current) {
+      const horse = swipeCardRef.current;
+      setLiked((prev) => [...prev, horse]);
+      if (Math.random() < 0.33) {
+        setMatchedHorse(horse);
+      }
+    }
+    swipeDirRef.current = null;
+    swipeCardRef.current = null;
     setDeck((d) => d.slice(1));
     setLeavingCard(null);
     setAnimating(null);
@@ -40,6 +56,8 @@ export default function CardDeck() {
   const triggerSwipe = (direction) => {
     if (animating !== null) return;
     swipeDone.current = false;
+    swipeDirRef.current = direction;
+    swipeCardRef.current = deck[0];
     setLeavingCard(deck[0]);
     setAnimating(direction);
     timeoutRef.current = setTimeout(finishSwipe, 300);
@@ -70,6 +88,8 @@ export default function CardDeck() {
     setDeck(shuffleDeck(horses));
     setLeavingCard(null);
     setAnimating(null);
+    setLiked([]);
+    setMatchedHorse(null);
   };
 
   const isEmpty = deck.length === 0 && !leavingCard && !animating;
@@ -108,7 +128,10 @@ export default function CardDeck() {
           ))}
         </div>
       )}
+      <button className="liked-nav-btn" onClick={() => setShowLiked((s) => !s)}>Liked ({liked.length})</button>
+      {showLiked && <LikedHorses horses={liked} />}
       <ProfileModal horse={selectedHorse} onClose={() => setSelectedHorse(null)} />
+      <MatchOverlay horse={matchedHorse} onClose={() => setMatchedHorse(null)} />
     </div>
   );
 }
