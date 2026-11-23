@@ -27,6 +27,9 @@ Maps to the acceptance criteria of the issue
        onAnimationEnd and slice(1) removal); src/App.jsx keeps
        'Horse Tinder Demo' and './data/horses'; MatchOverlay.jsx and
        LikedHorses.jsx keep their merged export signatures.
+- AC8 (partial): docs/project-spec.md keeps its Fixed section byte-for-byte
+  unchanged (length + FNV-1a 64 digest pinned to the merged spec);
+  package.json dependency sets are pinned by tests/test_swipe_deck.py.
 
 Purely static: file-content analysis only — no shelling out, no remote
 services, no conditional bypasses.  (Dynamic build self-verification is the
@@ -43,6 +46,7 @@ DECK = SRC / "components" / "CardDeck.jsx"
 APP = SRC / "App.jsx"
 MATCH = SRC / "components" / "MatchOverlay.jsx"
 LIKED = SRC / "components" / "LikedHorses.jsx"
+SPEC = ROOT / "docs" / "project-spec.md"
 
 
 def _deck() -> str:
@@ -463,6 +467,75 @@ def test_presentational_components_unchanged():
     assert re.search(r'className="liked-thumb"', liked), (
         "LikedHorses.jsx must keep the liked-thumb structure"
     )
+
+
+# ---------------------------------------------------------------------------
+# AC8 (partial) — docs/project-spec.md Fixed section stays byte-for-byte stable
+# ---------------------------------------------------------------------------
+
+# FNV-1a 64-bit digest and character length of the Fixed section exactly as
+# merged on main (PR #6). The Fixed part of the spec must be committed
+# unchanged, so any byte or length change must break this pinned digest.
+FIXED_FNV1A64 = 0x706BE30ACF599D9E
+FIXED_LEN = 3544
+
+
+def _fnv1a_64(data: bytes) -> int:
+    h = 0xCBF29CE484222325
+    for byte in data:
+        h = ((h * 0x100000001B3) & 0xFFFFFFFFFFFFFFFF) ^ byte
+    return h
+
+
+def _fixed_section() -> str:
+    spec = SPEC.read_text(encoding="utf-8")
+    assert spec.count("## Fixed") == 1, (
+        "project-spec.md must carry exactly one Fixed heading"
+    )
+    assert spec.count("## Living") == 1, (
+        "project-spec.md must carry exactly one Living heading"
+    )
+    start = spec.index("## Fixed")
+    end = spec.index("## Living")
+    assert start < end, "the Fixed section must precede the Living section"
+    return spec[start:end]
+
+
+def test_project_spec_fixed_section_unchanged():
+    fixed = _fixed_section()
+    assert len(fixed) == FIXED_LEN, (
+        "the Fixed section of docs/project-spec.md changed length; it must be "
+        "committed byte-for-byte unchanged"
+    )
+    assert _fnv1a_64(fixed.encode("utf-8")) == FIXED_FNV1A64, (
+        "the Fixed section of docs/project-spec.md changed content; it must be "
+        "committed byte-for-byte unchanged"
+    )
+
+
+def test_project_spec_fixed_section_structure_markers():
+    fixed = _fixed_section()
+    for marker in (
+        "### Goal",
+        "### Users",
+        "### Milestones",
+        "#### 1. Scaffold & Horse Data",
+        "#### 2. Swipe Deck UI",
+        "#### 3. Full Profile View",
+        "#### 4. Match Animation & Liked Collection",
+        "#### 5. Polish & Live Deploy",
+        "### Out of scope",
+        "### Constraints",
+        "### Latitude",
+        "Repository: bigdan88/horse_tinder (existing)",
+        "Stack: React + Vite (static SPA build)",
+        "Hosting: GitHub Pages",
+        "Budget: $20.0",
+        "Deadline: 3 days from approval",
+    ):
+        assert marker in fixed, (
+            f"Fixed section of docs/project-spec.md lost marker {marker!r}"
+        )
 
 
 # ---------------------------------------------------------------------------
