@@ -1,0 +1,52 @@
+.liked-nav-btn {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 50;
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.liked-nav-btn:hover {
+  background: #c0392b;
+}
+
+.liked-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 16px;
+  padding: 16px;
+}
+
+.liked-item {
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  text-align: center;
+}
+
+.liked-thumb {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.liked-item p {
+  margin: 8px 0 0;
+  font-weight: 600;
+  color: #333;
+}
+
+.liked-empty {
+  text-align: center;
+  color: #777;
+  font-style: italic;
+  padding: 24px;
+}
