@@ -29,6 +29,12 @@ Maps to the acceptance criteria of the issue
        vite.config.js, .github/workflows/deploy.yml, .gitignore, index.html,
        src/main.jsx and the README prefix/'## Live' block are unchanged, and
        docs/project-spec.md's Fixed section keeps its pinned FNV-1a digest.
+- AC9: no .jsx/.ts, package.json, vite.config.js, workflow, README.md or
+       existing test file is modified; docs/project-spec.md is committed with
+       its Fixed section byte-for-byte unchanged.
+- AC10: the committed verification note explicitly leaves the live GitHub
+       Pages URL load and the zero-browser-console-error checks unverified for
+       human confirmation and asserts no pass for them.
 
 Purely static: file-content analysis only, no shelling out, no remote
 services, no conditional bypasses.  (Dynamic build self-verification is the
@@ -63,6 +69,7 @@ README = ROOT / "README.md"
 GITIGNORE = ROOT / ".gitignore"
 INDEX_HTML = ROOT / "index.html"
 SPEC = ROOT / "docs" / "project-spec.md"
+VERIFICATION = ROOT / "docs" / "verification.md"
 
 # Hex literals the pre-existing suites pin inside component stylesheets.
 PINNED_HEXES = {"#fff", "#c0392b", "#e74c3c"}
@@ -825,6 +832,40 @@ def test_project_spec_fixed_section_digest_unchanged():
         )
     assert _read(SPEC).startswith("# Horse Tinder Demo"), (
         "docs/project-spec.md must keep its title"
+    )
+
+
+# ---------------------------------------------------------------------------
+# AC10 — browser-dependent checks stay unverified for human confirmation
+# ---------------------------------------------------------------------------
+
+
+def test_ac10_live_url_and_console_checks_unverified():
+    """AC10: the committed verification note leaves the live GitHub Pages URL
+    load and the zero-browser-console-error checks unverified for human
+    confirmation and asserts no pass for them."""
+    note = _read(VERIFICATION)
+    assert "https://bigdan88.github.io/horse_tinder/" in note, (
+        "the verification note must name the live GitHub Pages URL"
+    )
+    assert re.search(r"live GitHub Pages URL load", note, re.IGNORECASE), (
+        "the verification note must name the live URL load check"
+    )
+    assert re.search(r"zero browser-console errors", note, re.IGNORECASE), (
+        "the verification note must name the zero-console-error check"
+    )
+    assert re.search(r"unverified", note, re.IGNORECASE), (
+        "the verification note must mark both checks unverified"
+    )
+    assert re.search(r"human confirmation", note, re.IGNORECASE), (
+        "the verification note must defer both checks to human confirmation"
+    )
+    assert re.search(r"no\s+pass is\s+claimed", note, re.IGNORECASE), (
+        "the verification note must assert that no pass is claimed"
+    )
+    # The README still carries the live URL, but this suite never fetches it.
+    assert "## Live\n\nhttps://bigdan88.github.io/horse_tinder/" in _read(README), (
+        "README.md must keep the '## Live' heading and Pages URL"
     )
 
 
