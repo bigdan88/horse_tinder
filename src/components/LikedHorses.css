@@ -3,18 +3,21 @@
   top: 16px;
   right: 16px;
   z-index: 50;
-  background: #e74c3c;
-  color: #fff;
+  background: #fff;
+  color: var(--accent-dark);
   border: none;
-  border-radius: 20px;
-  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  padding: 8px 18px;
+  font-weight: 600;
   font-size: 0.95rem;
   cursor: pointer;
+  box-shadow: var(--shadow-sm);
   max-width: calc(100vw - 2rem);
 }
 
 .liked-nav-btn:hover {
-  background: #c0392b;
+  background: #e74c3c;
+  color: #fff;
 }
 
 .liked-grid {
