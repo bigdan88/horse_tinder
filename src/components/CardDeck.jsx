@@ -33,6 +33,7 @@ export default function CardDeck() {
   const swipeDone = useRef(true);
   const swipeDirRef = useRef(null);
   const swipeCardRef = useRef(null);
+  const dragExit = useRef(false);
 
   const finishSwipe = () => {
     if (swipeDone.current) return;
@@ -50,6 +51,8 @@ export default function CardDeck() {
     }
     swipeDirRef.current = null;
     swipeCardRef.current = null;
+    dragExit.current = false;
+    deltaX.current = 0;
     setDeck((d) => d.slice(1));
     setLeavingCard(null);
     setAnimating(null);
@@ -58,9 +61,20 @@ export default function CardDeck() {
 
   const triggerSwipe = (direction) => {
     if (animating !== null) return;
+    const fromDrag = Math.abs(deltaX.current) > SWIPE_THRESHOLD;
     swipeDone.current = false;
     swipeDirRef.current = direction;
     swipeCardRef.current = deck[0];
+    dragExit.current = fromDrag;
+    if (fromDrag) {
+      // Continue the exit from the dragged position instead of letting the
+      // keyframes snap the card back to centre first. The inline transform
+      // transitions to the off-screen target while the keyframe animation is
+      // disabled for this card.
+      const distance =
+        (typeof window !== 'undefined' ? window.innerWidth : 1200) * 1.2;
+      setDragX(direction === 'right' ? distance : -distance);
+    }
     setLeavingCard(deck[0]);
     setAnimating(direction);
     timeoutRef.current = setTimeout(finishSwipe, 300);
@@ -103,11 +117,20 @@ export default function CardDeck() {
   const isEmpty = deck.length === 0 && !leavingCard && !animating;
 
   const dragTilt = Math.max(-12, Math.min(12, dragX * 0.06));
+  const isDragExit = animating !== null && dragExit.current;
+  const exitTilt = animating === 'right' ? 15 : -15;
   const stackStyles = [
     {
       zIndex: 30,
-      transform: `translateX(${dragX}px) rotate(${dragTilt}deg)`,
-      transition: dragging.current ? 'none' : 'transform 200ms ease-out',
+      transform: isDragExit
+        ? `translateX(${dragX}px) rotate(${exitTilt}deg)`
+        : `translateX(${dragX}px) rotate(${dragTilt}deg)`,
+      transition: isDragExit
+        ? 'transform 300ms ease-out'
+        : dragging.current
+          ? 'none'
+          : 'transform 200ms ease-out',
+      animation: isDragExit ? 'none' : undefined,
     },
     { zIndex: 20, transform: 'translateY(12px) scale(0.95) rotate(-2deg)' },
     { zIndex: 10, transform: 'translateY(24px) scale(0.9) rotate(2deg)' },
