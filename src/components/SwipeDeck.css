@@ -13,7 +13,7 @@
   position: absolute;
   inset: 0;
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-lg);
   overflow: hidden;
   background: var(--surface);
 }
@@ -34,12 +34,12 @@
   padding: clamp(12px, 4vw, 20px);
   max-width: 100%;
   color: #fff;
-  background: linear-gradient(to top, var(--overlay), transparent);
+  background: linear-gradient(to top, var(--card-gradient), transparent);
 }
 
 .card-info h2 {
   margin: 0 0 4px;
-  font-size: 1.4rem;
+  font-size: 1.75rem;
 }
 
 .card-info .breed {
@@ -50,6 +50,7 @@
 
 .card-info .age {
   margin: 2px 0 0;
+  font-weight: 600;
   opacity: 0.8;
 }
 
@@ -81,6 +82,50 @@
     transform: translateX(-120vw) rotate(-15deg);
     opacity: 0;
   }
+}
+
+.swipe-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin: 20px 0 8px;
+}
+
+.swipe-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--muted);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 1.6rem;
+  line-height: 1;
+  user-select: none;
+  box-shadow: var(--shadow-sm);
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.swipe-btn-reject {
+  color: var(--btn-reject);
+}
+
+.swipe-btn-accept {
+  color: var(--btn-accept);
+}
+
+.swipe-btn:hover {
+  transform: scale(1.08);
+  box-shadow: var(--shadow);
+}
+
+.swipe-btn:active {
+  transform: scale(0.94);
 }
 
 .counter {
