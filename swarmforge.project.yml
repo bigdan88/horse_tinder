@@ -1,3 +1,9 @@
 sandbox_image: swarmforge-dev-sandbox:latest
 install_command: npm install --no-package-lock --no-audit --no-fund --cache /tmp/swarmforge-npm-cache
 test_command: python -m pytest -q
+
+preview:
+  command: npm run dev -- --host 127.0.0.1 --port 5173
+  port: 5173
+  pages:
+    - /
