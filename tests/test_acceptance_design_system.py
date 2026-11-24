@@ -135,3 +135,52 @@ def test_ac7_card_deck_uses_min_340px_90vw():
     assert re.search(r"width:\s*min\(\s*340px\s*,\s*90vw\s*\)", deck), (
         ".card-deck must use width: min(340px, 90vw)"
     )
+
+
+# ---------------------------------------------------------------------------
+# AC8 — the suite stays static-only with no placeholder tests
+# ---------------------------------------------------------------------------
+
+
+def test_suite_files_are_static_only_placeholder_never_run():
+    """AC8: this suite is static-only and has no placeholder tests.
+
+    The delivery gate maps AC8 to this node, so it must be a real, collected
+    test: no shelling out, no network, no skipped or expected-failure tests
+    and no empty placeholder bodies that would silently pass without checking
+    anything.
+    """
+    src = Path(__file__).read_text(encoding="utf-8")
+
+    forbidden = [
+        "sub" + "process",
+        "py" + "test." + "skip",
+        "xf" + "ail",
+        "os." + "system",
+        "sock" + "et",
+        "requ" + "ests",
+        "url" + "open",
+    ]
+    for token in forbidden:
+        assert token not in src, f"static suite must not use {token}"
+
+    import_lines = [
+        line.strip() for line in src.splitlines() if re.match(r"^(import|from)\s", line)
+    ]
+    assert import_lines == ["import re", "from pathlib import Path"], (
+        "the suite may import only re and pathlib"
+    )
+
+    assert not re.search(r"^\s*pass\s*$", src, re.MULTILINE), (
+        "the suite must not contain placeholder pass stubs"
+    )
+    assert not re.search(r"^\s*\.\.\.\s*$", src, re.MULTILINE), (
+        "the suite must not contain placeholder ellipsis stubs"
+    )
+    assert not re.search(r"@pytest\.mark\.(skip|skipif|xf" + "ail)", src), (
+        "the suite must not skip or mark tests as expected failures"
+    )
+
+    test_names = re.findall(r"^def (test_\w+)\(", src, re.MULTILINE)
+    assert test_names, "the suite must define real tests"
+    assert len(test_names) == len(set(test_names)), "test names must be unique"
