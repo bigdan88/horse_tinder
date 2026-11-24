@@ -35,6 +35,7 @@ INDEX_CSS = ROOT / "src" / "index.css"
 APP_CSS = ROOT / "src" / "App.css"
 APP = ROOT / "src" / "App.jsx"
 SWIPE_CSS = ROOT / "src" / "components" / "SwipeDeck.css"
+LIKED_CSS = ROOT / "src" / "components" / "LikedHorses.css"
 DECK = ROOT / "src" / "components" / "CardDeck.jsx"
 CARD = ROOT / "src" / "components" / "Card.jsx"
 PACKAGE = ROOT / "package.json"
@@ -248,6 +249,60 @@ def test_ac6_top_bar_and_liked_counter():
     )
     assert "Liked ({liked.length})" in deck, (
         "CardDeck.jsx must keep the Liked ({liked.length}) label"
+    )
+
+
+def test_ac6_liked_counter_docked_into_topbar():
+    """The Liked counter must sit inside the fixed top-bar band.
+
+    The counter is rendered by CardDeck.jsx as a fixed-position button, so it
+    only reads as part of the top bar when it is pinned near the top-right
+    corner, stacks above the bar itself, and the bar reserves horizontal room
+    for it instead of letting the title run underneath.
+    """
+    liked_css = _read(LIKED_CSS)
+    app_css = _read(APP_CSS)
+
+    counter = _rule(liked_css, ".liked-nav-btn")
+    assert counter, f".liked-nav-btn rule must exist in {LIKED_CSS.relative_to(ROOT)}"
+    assert re.search(r"position:\s*fixed", counter), (
+        ".liked-nav-btn must be position: fixed so it docks into the top bar"
+    )
+
+    def _px(body: str, prop: str) -> float:
+        m = re.search(r"(?<![\w-])" + prop + r":\s*(-?\d+(?:\.\d+)?)px", body)
+        assert m, f".liked-nav-btn must declare a px {prop} offset"
+        return float(m.group(1))
+
+    top = _px(counter, "top")
+    right = _px(counter, "right")
+    assert top <= 24, f".liked-nav-btn top must be <= 24px, got {top}px"
+    assert right <= 24, f".liked-nav-btn right must be <= 24px, got {right}px"
+
+    topbar = _rule(app_css, ".topbar")
+    assert topbar, f".topbar rule must exist in {APP_CSS.relative_to(ROOT)}"
+
+    def _z_index(body: str, selector: str) -> int:
+        m = re.search(r"z-index:\s*(-?\d+)", body)
+        assert m, f"{selector} must declare a numeric z-index"
+        return int(m.group(1))
+
+    counter_z = _z_index(counter, ".liked-nav-btn")
+    topbar_z = _z_index(topbar, ".topbar")
+    assert counter_z >= topbar_z, (
+        f".liked-nav-btn z-index ({counter_z}) must be >= the .topbar "
+        f"z-index ({topbar_z}) so the counter stays visible in the bar"
+    )
+
+    reserve = re.search(r"(?<![\w-])padding-right:\s*([^;]+);", topbar)
+    assert reserve, (
+        ".topbar must declare a standalone padding-right reserving room for the "
+        "Liked counter (a padding shorthand is not enough)"
+    )
+    rems = [float(v) for v in re.findall(r"(\d+(?:\.\d+)?)rem", reserve.group(1))]
+    assert rems and max(rems) >= 7, (
+        ".topbar padding-right must reserve at least 7rem for the Liked counter, "
+        f"got {reserve.group(1).strip()}"
     )
 
 
