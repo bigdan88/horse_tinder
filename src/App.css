@@ -1,10 +1,17 @@
+.app-shell {
+  min-height: 100vh;
+  background: var(--background);
+}
+
 .app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: clamp(1rem, 3vw, 2rem);
   padding: clamp(1rem, 3vw, 2.5rem);
+  padding-top: clamp(110px, 18vh, 150px);
   box-sizing: border-box;
   background: var(--background);
   color: var(--text);
@@ -14,17 +21,40 @@
   margin: 0 auto;
 }
 
-.app > * {
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
   width: 100%;
-  max-width: min(var(--container), 100%);
+  box-sizing: border-box;
+  padding: 0.9rem clamp(1rem, 3vw, 1.75rem);
+  padding-right: clamp(8.5rem, 26vw, 12rem);
+  background: var(--topbar-bg);
+  color: var(--topbar-text);
+  box-shadow: var(--shadow-sm);
+  border-radius: 0;
 }
 
-.app > h1, .app > .tagline {
-  text-align: center;
+.topbar h1 {
+  margin: 0;
+  font-size: clamp(1.35rem, 4vw, 2.15rem);
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  color: var(--topbar-text);
 }
 
-h1 {
-  color: var(--accent-dark);
+.topbar .tagline {
+  margin: 0;
+  font-size: clamp(0.85rem, 2.5vw, 1.05rem);
+  color: var(--topbar-text);
+  opacity: 0.85;
+  text-align: right;
 }
 
 .tagline {
@@ -33,25 +63,35 @@ h1 {
 }
 
 @media (max-width: 480px) {
-  .app {
-    padding: 0.75rem;
-    justify-content: flex-start;
+  .topbar {
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+    padding-right: 7.5rem;
   }
 
-  .tagline {
-    font-size: 0.95rem;
-    margin: 0 0 0.75rem;
+  .app {
+    padding: 0.75rem;
+    padding-top: 132px;
+    justify-content: flex-start;
+    gap: 0.85rem;
+  }
+
+  .topbar .tagline {
+    text-align: left;
+    font-size: 0.9rem;
   }
 }
 
 @media (min-width: 1024px) {
-  h1 {
-    font-size: 2.5rem;
-    line-height: 1.15;
-  }
-
   .app {
     max-width: min(var(--container), 100%);
     padding: clamp(1.5rem, 3vw, 2.5rem);
+    padding-top: 140px;
+    gap: 2.25rem;
+  }
+
+  .topbar {
+    padding: 1.1rem 2rem;
+    padding-right: 14rem;
   }
 }
