@@ -10,6 +10,7 @@
   padding: 8px 16px;
   font-size: 0.95rem;
   cursor: pointer;
+  max-width: calc(100vw - 2rem);
 }
 
 .liked-nav-btn:hover {
@@ -19,16 +20,22 @@
 .liked-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(140px, 100%), 1fr));
   gap: 16px;
   padding: 16px;
+  max-width: min(var(--container), 100%);
+  margin: 0 auto;
+  width: 100%;
 }
 
 .liked-item {
   background: #fff;
   border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--shadow-sm);
   text-align: center;
+  min-width: 0;
 }
 
 .liked-thumb {
@@ -36,17 +43,18 @@
   height: 100px;
   object-fit: cover;
   border-radius: 8px;
+  border-radius: var(--radius-sm);
 }
 
 .liked-item p {
   margin: 8px 0 0;
   font-weight: 600;
-  color: #333;
+  color: var(--text);
 }
 
 .liked-empty {
   text-align: center;
-  color: #777;
+  color: var(--muted);
   font-style: italic;
   padding: 24px;
 }
