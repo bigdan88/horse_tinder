@@ -1,3 +1,8 @@
+.app-shell {
+  min-height: 100vh;
+  background: var(--background);
+}
+
 .app {
   min-height: 100vh;
   display: flex;
@@ -6,6 +11,7 @@
   justify-content: center;
   gap: clamp(1rem, 3vw, 2rem);
   padding: clamp(1rem, 3vw, 2.5rem);
+  padding-top: clamp(110px, 18vh, 150px);
   box-sizing: border-box;
   background: var(--background);
   color: var(--text);
@@ -16,17 +22,23 @@
 }
 
 .topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
   width: 100%;
-  max-width: min(var(--container), 100%);
+  box-sizing: border-box;
   padding: 0.9rem clamp(1rem, 3vw, 1.75rem);
-  border-radius: var(--radius-md);
+  padding-right: clamp(8.5rem, 26vw, 12rem);
   background: var(--topbar-bg);
   color: var(--topbar-text);
   box-shadow: var(--shadow-sm);
+  border-radius: 0;
 }
 
 .topbar h1 {
@@ -51,17 +63,17 @@
 }
 
 @media (max-width: 480px) {
-  .app {
-    padding: 0.75rem;
-    justify-content: flex-start;
-    gap: 0.85rem;
+  .topbar {
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+    padding-right: 7.5rem;
   }
 
-  .topbar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.25rem;
-    padding: 0.75rem 1rem;
+  .app {
+    padding: 0.75rem;
+    padding-top: 132px;
+    justify-content: flex-start;
+    gap: 0.85rem;
   }
 
   .topbar .tagline {
@@ -74,11 +86,12 @@
   .app {
     max-width: min(var(--container), 100%);
     padding: clamp(1.5rem, 3vw, 2.5rem);
+    padding-top: 140px;
     gap: 2.25rem;
   }
 
   .topbar {
     padding: 1.1rem 2rem;
-    gap: 1.5rem;
+    padding-right: 14rem;
   }
 }
