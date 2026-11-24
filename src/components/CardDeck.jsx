@@ -25,8 +25,10 @@ export default function CardDeck() {
   const [liked, setLiked] = useState([]);
   const [matchedHorse, setMatchedHorse] = useState(null);
   const [showLiked, setShowLiked] = useState(false);
+  const [dragX, setDragX] = useState(0);
   const startX = useRef(0);
   const deltaX = useRef(0);
+  const dragging = useRef(false);
   const timeoutRef = useRef(null);
   const swipeDone = useRef(true);
   const swipeDirRef = useRef(null);
@@ -51,6 +53,7 @@ export default function CardDeck() {
     setDeck((d) => d.slice(1));
     setLeavingCard(null);
     setAnimating(null);
+    setDragX(0);
   };
 
   const triggerSwipe = (direction) => {
@@ -66,14 +69,18 @@ export default function CardDeck() {
   const handlePointerDown = (e) => {
     startX.current = e.clientX;
     deltaX.current = 0;
+    dragging.current = true;
     e.currentTarget.setPointerCapture(e.pointerId);
   };
 
   const handlePointerMove = (e) => {
+    if (!dragging.current) return;
     deltaX.current = e.clientX - startX.current;
+    setDragX(deltaX.current);
   };
 
   const handlePointerUp = () => {
+    dragging.current = false;
     if (Math.abs(deltaX.current) > SWIPE_THRESHOLD) {
       triggerSwipe(deltaX.current > 0 ? 'right' : 'left');
     } else {
@@ -81,6 +88,7 @@ export default function CardDeck() {
         setSelectedHorse(deck[0]);
       }
       deltaX.current = 0;
+      setDragX(0);
     }
   };
 
@@ -94,8 +102,13 @@ export default function CardDeck() {
 
   const isEmpty = deck.length === 0 && !leavingCard && !animating;
 
+  const dragTilt = Math.max(-12, Math.min(12, dragX * 0.06));
   const stackStyles = [
-    { zIndex: 30 },
+    {
+      zIndex: 30,
+      transform: `translateX(${dragX}px) rotate(${dragTilt}deg)`,
+      transition: dragging.current ? 'none' : 'transform 200ms ease-out',
+    },
     { zIndex: 20, transform: 'translateY(12px) scale(0.95) rotate(-2deg)' },
     { zIndex: 10, transform: 'translateY(24px) scale(0.9) rotate(2deg)' },
   ];
@@ -110,23 +123,43 @@ export default function CardDeck() {
           Reset &amp; Shuffle
         </button>
       ) : (
-        <div
-          className="card-deck"
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onAnimationEnd={finishSwipe}
-        >
-          {visible.map((horse, i) => (
-            <Card
-              key={horse.id}
-              horse={horse}
-              zIndex={stackStyles[i].zIndex}
-              style={stackStyles[i]}
-              className={i === 0 && animating ? (animating === 'right' ? 'swipe-right' : 'swipe-left') : ''}
-            />
-          ))}
-        </div>
+        <>
+          <div
+            className="card-deck"
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onAnimationEnd={finishSwipe}
+          >
+            {visible.map((horse, i) => (
+              <Card
+                key={horse.id}
+                horse={horse}
+                zIndex={stackStyles[i].zIndex}
+                style={stackStyles[i]}
+                className={i === 0 && animating ? (animating === 'right' ? 'swipe-right' : 'swipe-left') : ''}
+              />
+            ))}
+          </div>
+          <div className="swipe-actions">
+            <button
+              className="swipe-btn swipe-btn-reject"
+              onClick={() => triggerSwipe('left')}
+              aria-label="Reject"
+              type="button"
+            >
+              ✕
+            </button>
+            <button
+              className="swipe-btn swipe-btn-accept"
+              onClick={() => triggerSwipe('right')}
+              aria-label="Like"
+              type="button"
+            >
+              ♥
+            </button>
+          </div>
+        </>
       )}
       <button className="liked-nav-btn" onClick={() => setShowLiked((s) => !s)}>Liked ({liked.length})</button>
       {showLiked && <LikedHorses horses={liked} />}
