@@ -5,8 +5,10 @@ import './App.css'
 export default function App() {
   return (
     <div className="app">
-      <h1>Horse Tinder Demo</h1>
-      <p className="tagline">{horses.length} horses looking for love</p>
+      <header className="topbar">
+        <h1>Horse Tinder Demo</h1>
+        <p className="tagline">{horses.length} horses looking for love</p>
+      </header>
       <CardDeck />
     </div>
   )
